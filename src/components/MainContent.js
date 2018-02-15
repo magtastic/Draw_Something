@@ -5,13 +5,18 @@ import Board from './Board';
 const MainContentContainer = styled.div``;
 
 class MainContent extends Component {
+
+  sendPathToFirebase(path) {
+    console.log(`sending ${path} to firebase...`);
+  }
+
   render() {
     return (
       <MainContentContainer>
         <p>
           this is the main content
         </p>
-        <Board/>
+        <Board sendPathToFirebase={this.sendPathToFirebase}/>
       </MainContentContainer>
     );
   }

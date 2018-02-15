@@ -21,6 +21,8 @@ class Board extends Component {
       },
     }
 
+    this.sendPathToFirebase = props.sendPathToFirebase;
+
     this.captureMouseMove = this.captureMouseMove.bind(this);
   }
 
@@ -67,7 +69,7 @@ class Board extends Component {
 
   mouseUp(e) {
     e.target.removeEventListener('mousemove', this.captureMouseMove, true);
-    console.log(this.state.strokes);
+    this.sendPathToFirebase(this.state.strokes[this.state.strokes.length - 1]);
   }
 
   render() {
