@@ -75,8 +75,8 @@ class Board extends Component {
     return (
       <BoardContainer>
         <Canvas
-          onMouseDown={this.mouseDown}
-          onMouseUp={this.mouseUp}
+          onMouseDown={this.mouseDown.bind(this)}
+          onMouseUp={this.mouseUp.bind(this)}
           width={this.state.canvas.width}
           height={this.state.canvas.height}
         />

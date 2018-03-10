@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import * as firebase from 'firebase';
-import database from '../databases/firestore';
+import app from '../databases/firestore';
 
 const LoginContainer = styled.div`
 `;
 
 function loginUser() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  database.auth()
+  app.auth()
     .signInWithPopup(provider)
     .then((result) => {
       console.log(result);
