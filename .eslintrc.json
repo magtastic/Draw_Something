@@ -1,0 +1,10 @@
+{
+    "extends": "airbnb",
+    "rules": {
+        "react/prop-types": "off",
+        "no-console": "off"
+    },
+    "plugins": [
+        "import"
+    ]
+}

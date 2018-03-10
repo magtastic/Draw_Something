@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const BoardContainer = styled.div`
   display: flex;
@@ -9,8 +9,29 @@ const Canvas = styled.canvas`
   border: solid black 1px;
 `;
 
-class Board extends Component {
+function getMousePos(e, canvas) {
+  const { left, top } = canvas.getBoundingClientRect();
+  return {
+    x: e.clientX - left,
+    y: e.clientY - top,
+  };
+}
 
+function drawLineBetween(prevPos, currPos, canvas) {
+  const ctx = canvas.getContext('2d');
+
+  ctx.beginPath();
+
+  ctx.strokeStyle = 'black';
+
+  ctx.moveTo(prevPos.x, prevPos.y);
+  ctx.lineTo(currPos.x, currPos.y);
+  ctx.lineWidth = 3;
+
+  ctx.stroke();
+}
+
+class Board extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,47 +40,25 @@ class Board extends Component {
         width: 500,
         height: 500,
       },
-    }
+    };
 
     this.sendPathToFirebase = props.sendPathToFirebase;
 
     this.captureMouseMove = this.captureMouseMove.bind(this);
   }
 
-  getMousePos(e, canvas) {
-    const { left, top } = canvas.getBoundingClientRect();
-    return {
-      x: e.clientX - left,
-      y: e.clientY - top,
-    };
-  }
-
-  drawLineBetween(prevPos, currPos, canvas) {
-    const ctx = canvas.getContext("2d");
-
-    ctx.beginPath();
-
-    ctx.strokeStyle = "black";
-
-    ctx.moveTo(prevPos.x, prevPos.y);
-    ctx.lineTo(currPos.x, currPos.y); 
-    ctx.lineWidth = 3;
-
-    ctx.stroke();
-  }
-
   captureMouseMove(e) {
     const { strokes } = this.state;
     const canvas = e.target;
-    const pos = this.getMousePos(e, canvas);
-    strokes[strokes.length -1 ].push(pos);
+    const pos = getMousePos(e, canvas);
+    strokes[strokes.length - 1].push(pos);
 
     const currPath = strokes[strokes.length - 1];
     if (currPath.length > 1) {
-      this.drawLineBetween(currPath[currPath.length-2], currPath[currPath.length-1], canvas);
+      drawLineBetween(currPath[currPath.length - 2], currPath[currPath.length - 1], canvas);
     }
 
-    this.setState({ strokes: strokes });
+    this.setState({ strokes });
   }
 
   mouseDown(e) {
@@ -75,11 +74,11 @@ class Board extends Component {
   render() {
     return (
       <BoardContainer>
-        <Canvas 
-        onMouseDown={this.mouseDown.bind(this)}
-        onMouseUp={this.mouseUp.bind(this)}
-        width={this.state.canvas.width}
-        height={this.state.canvas.height}
+        <Canvas
+          onMouseDown={this.mouseDown}
+          onMouseUp={this.mouseUp}
+          width={this.state.canvas.width}
+          height={this.state.canvas.height}
         />
       </BoardContainer>
     );
