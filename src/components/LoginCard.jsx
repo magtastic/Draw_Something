@@ -4,6 +4,10 @@ import * as firebase from 'firebase';
 import app from '../databases/firestore';
 
 const LoginContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 function loginUser() {
@@ -22,9 +26,12 @@ class LoginCard extends Component {
     return (
       <LoginContainer>
         <h1>
-          Hey login Man!
+          Welcome
         </h1>
-        <button onClick={loginUser}> login </button>
+        <h2>
+          Please sign in
+        </h2>
+        <button onClick={loginUser}> Google Sign In </button>
       </LoginContainer>
     );
   }

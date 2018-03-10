@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import Board from './Board';
+import Lobby from './Lobby';
 import app from '../databases/firestore';
 
 const firestore = app.firestore();
 
 const HomeContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 function signOut() {
@@ -35,14 +38,35 @@ class Home extends Component {
 
   startGame() {
     const { uid } = this.state.user;
-    app.firestore().collection('game')
+    app.firestore()
+      .collection('game')
       .add({ creator: uid })
-      .then((ref) => {
-        this.setState({ gameID: ref.id });
+      .then(ref => [ref.collection('players').add({ uid }), ref])
+      .then(([, gameRef]) => {
+        this.setState({ gameID: gameRef.id });
       })
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  joinGame() {
+    const { uid } = this.state.user;
+    app.firestore()
+      .collection('game')
+      .doc(this.state.gameToJoin)
+      .collection('players')
+      .add({ uid })
+      .then(() => {
+        this.setState({ gameID: this.state.gameToJoin });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  handleGameToJoinInput(e) {
+    this.setState({ gameToJoin: e.target.value });
   }
 
   render() {
@@ -53,10 +77,12 @@ class Home extends Component {
         </h1>
         {
           this.state.gameID ?
-            <Board sendPathToFirebase={this.sendPathToFirebase.bind(this)} />
-            : null
+            <Lobby gameID={this.state.gameID} />
+            :
+            <button onClick={this.startGame.bind(this)}> Start a game </button>
         }
-        <button onClick={this.startGame.bind(this)}> Start a game </button>
+        <input type="text" value={this.state.gameToJoin} onChange={this.handleGameToJoinInput.bind(this)} />
+        <button onClick={this.joinGame.bind(this)}>join game</button>
         <button onClick={signOut}> Logout </button>
       </HomeContainer>
     );
