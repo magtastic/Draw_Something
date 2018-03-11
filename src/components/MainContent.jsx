@@ -6,7 +6,6 @@ import app from '../databases/firestore';
 
 const MainContentContainer = styled.div``;
 
-// eslint-disable-next-line no-unused-vars
 class MainContent extends Component {
   constructor(props) {
     super(props);

@@ -10,6 +10,7 @@
     "firebase-functions": "^0.8.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-instantsearch": "^5.0.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
     "styled-components": "^3.1.6"
