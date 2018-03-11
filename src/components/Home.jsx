@@ -1,24 +1,10 @@
 import React, { Component } from 'react';
-import { InstantSearch, SearchBox, Hits } from 'react-instantsearch/dom';
 import styled from 'styled-components';
 import Lobby from './Lobby';
 import UserProfile from './UserProfile';
 import app from '../databases/firestore';
 
 const firestore = app.firestore();
-
-function Product({ hit }) {
-  console.log(hit);
-  return <div>{hit.user_name}</div>;
-}
-
-function Search() {
-  return (
-    <div>
-      <Hits hitComponent={Product} />
-    </div>
-  );
-}
 
 const HomeContainer = styled.div`
   display: flex;
