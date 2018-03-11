@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Lobby from './Lobby';
-import UserProfile from './UserProfile';
+import Board from './Board';
+import GameCreation from './GameCreation';
+import CurrentUserHeader from './CurrentUserHeader';
 import app from '../../databases/firestore';
 
 const firestore = app.firestore();
@@ -13,76 +15,86 @@ const HomeContainer = styled.div`
   justify-content: center;
 `;
 
-function signOut() {
-  app.auth()
-    .signOut()
-    .then(() => {
-      console.log('sign out succ.');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       userID: props.userID,
+      gameHasStarted: false,
     };
   }
 
-  sendPathToFirebase(path) {
-    const pathRef = firestore.collection('game').doc(this.state.gameID).collection('paths');
-    pathRef.add({ path }).then(() => console.log('all cool'));
+  listenIfGameHasStarted() {
+    firestore
+      .collection('games')
+      .doc(this.state.gameID)
+      .onSnapshot((snap) => {
+        const profile = snap.data();
+        console.log(profile);
+        if (profile.game_started) {
+          this.setState({ gameHasStarted: true });
+        } else {
+          this.setState({ gameHasStarted: false });
+        }
+      })
+      .then(() => {
+        console.log('game data changed');
+      })
+      .catch((err) => {
+        console.log(`error when fetching game data ${err}`);
+      });
   }
 
   startGame() {
     const { userID } = this.state;
-    app.firestore()
+    firestore
       .collection('games')
       .add({ creator: userID })
       .then(ref => [ref.collection('players').add({ userID }), ref])
       .then(([, gameRef]) => {
         this.setState({ gameID: gameRef.id });
+        this.listenIfGameHasStarted();
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  joinGame() {
+  joinGame(gameID) {
     const { userID } = this.state;
-    app.firestore()
-      .collection('game')
-      .doc(this.state.gameToJoin)
+    firestore
+      .collection('games')
+      .doc(gameID)
       .collection('players')
       .add({ userID })
       .then(() => {
-        this.setState({ gameID: this.state.gameToJoin });
+        this.setState({ gameID });
       })
       .catch((err) => {
         console.log(err);
       });
-  }
-
-  handleGameToJoinInput(e) {
-    this.setState({ gameToJoin: e.target.value });
   }
 
   render() {
     return (
       <HomeContainer>
-        <UserProfile userID={this.state.userID} />
+        <CurrentUserHeader />
         {
           this.state.gameID ?
-            <Lobby gameID={this.state.gameID} />
+            <div>
+              {
+                this.state.gameHasStarted ?
+                  <Board gameID={this.state.gameID} />
+                  :
+                  <Lobby gameID={this.state.gameID} />
+              }
+            </div>
             :
-            <button onClick={this.startGame.bind(this)}> Start a game </button>
+            <GameCreation
+              startGame={this.startGame.bind(this)}
+              joinGame={this.joinGame.bind(this)}
+            />
         }
-        <input type="text" value={this.state.gameToJoin} onChange={this.handleGameToJoinInput.bind(this)} />
-        <button onClick={this.joinGame.bind(this)}>join game</button>
-        <button onClick={signOut}> Logout </button>
       </HomeContainer>
     );
   }

@@ -15,25 +15,36 @@ class Lobby extends Component {
   }
 
   listenForNewUsers() {
-    console.log(this.state.gameID);
     app.firestore()
       .collection(`games/${this.state.gameID}/players`)
       .onSnapshot((snaps) => {
         snaps.docChanges.forEach((snap) => {
-          console.log(snap);
           switch (snap.type) {
             case 'added': {
               const newPlayer = snap.doc.data();
-              console.log('newplayer: ', newPlayer);
-              this.setState(prevState => ({ players: [...prevState.players, newPlayer.uid] }));
+              this.setState({ players: this.state.players.concat(newPlayer) });
               break;
             }
             default:
-              console.log(snap.doc.data());
           }
         });
       }, (err) => {
-        console.log(err);
+        console.log(`error in listening for new users ${err}`);
+      });
+  }
+
+  startGame() {
+    app.firestore()
+      .collection('games')
+      .doc(this.state.gameID)
+      .set({
+        game_started: true,
+      }, { merge: true })
+      .then(() => {
+        console.log('game created successfully');
+      })
+      .catch((err) => {
+        console.log(`error in creating game: ${err}`);
       });
   }
 
@@ -44,10 +55,11 @@ class Lobby extends Component {
           Hey this is the lobby
           gameID: {this.state.gameID}
         </h1>
-        <h3>
+        <div>
           Here are the players:
-          {this.state.players}
-        </h3>
+          { this.state.players.map(player => <h2 key={player.userID}> {player.userID} </h2>) }
+        </div>
+        <button onClick={this.startGame.bind(this)}> Start Game </button>
       </LobbyContainer>
     );
   }

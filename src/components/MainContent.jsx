@@ -16,11 +16,11 @@ class MainContent extends Component {
   setupLoginListener() {
     console.log('listening');
     app.auth().onAuthStateChanged((user) => {
-      console.log('here', user);
       if (user) {
-        this.setState({ user });
+        console.log(user.uid);
+        this.setState({ userID: user.uid });
       } else {
-        this.setState({ user: undefined });
+        this.setState({ userID: undefined });
       }
     });
   }
@@ -28,7 +28,7 @@ class MainContent extends Component {
   render() {
     return (
       <MainContentContainer>
-        { this.state.user ? <Home userID={this.state.user.uid} /> : <LoginCard /> }
+        { this.state.userID ? <Home userID={this.state.userID} /> : <LoginCard /> }
       </MainContentContainer>
     );
   }

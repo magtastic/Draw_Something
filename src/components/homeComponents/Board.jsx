@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import app from '../../databases/firestore';
+
+const firestore = app.firestore();
 
 const BoardContainer = styled.div`
   display: flex;
@@ -16,6 +19,7 @@ function getMousePos(e, canvas) {
     y: e.clientY - top,
   };
 }
+
 
 function drawLineBetween(prevPos, currPos, canvas) {
   const ctx = canvas.getContext('2d');
@@ -35,6 +39,7 @@ class Board extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      gameID: props.gameID,
       strokes: [],
       canvas: {
         width: 500,
@@ -43,8 +48,23 @@ class Board extends Component {
     };
 
     this.sendPathToFirebase = props.sendPathToFirebase;
-
     this.captureMouseMove = this.captureMouseMove.bind(this);
+    this.getPlayers();
+  }
+
+  getPlayers() {
+    firestore
+      .collection('games')
+      .doc(this.state.gameID)
+      .collection('players')
+      .get((snap) => {
+        this.setState({ players: snap.data() });
+      });
+  }
+
+  sendPathToFirebase(path) {
+    const pathRef = firestore.collection('game').doc(this.state.gameID).collection('paths');
+    pathRef.add({ path }).then(() => console.log('all cool'));
   }
 
   captureMouseMove(e) {
@@ -80,6 +100,7 @@ class Board extends Component {
           width={this.state.canvas.width}
           height={this.state.canvas.height}
         />
+        { this.state.players.map(player => <h1>{player}</h1>) }
       </BoardContainer>
     );
   }
