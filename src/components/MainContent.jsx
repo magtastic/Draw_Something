@@ -29,7 +29,7 @@ class MainContent extends Component {
   render() {
     return (
       <MainContentContainer>
-        { this.state.user ? <Home user={this.state.user} /> : <LoginCard /> }
+        { this.state.user ? <Home userID={this.state.user.uid} /> : <LoginCard /> }
       </MainContentContainer>
     );
   }

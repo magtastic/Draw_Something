@@ -15,7 +15,18 @@ function loginUser() {
   app.auth()
     .signInWithPopup(provider)
     .then((result) => {
-      console.log(result);
+      const { user } = result;
+      return app.firestore().collection('users').doc(user.uid).set({
+        user_name: user.displayName,
+        email: user.email,
+        profile_picture_url: user.photoURL,
+        provider: result.additionalUserInfo.providerId,
+        provider_profile: result.additionalUserInfo.profile,
+        metadata: {
+          creation_time: user.metadata.creationTime,
+          last_sign_in_time: user.metadata.lastSignInTime,
+        },
+      });
     })
     .catch(err => console.log(err));
 }

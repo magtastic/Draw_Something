@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Lobby from './Lobby';
+import UserProfile from './UserProfile';
 import app from '../databases/firestore';
 
 const firestore = app.firestore();
@@ -27,7 +28,7 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: props.user,
+      userID: props.userID,
     };
   }
 
@@ -37,11 +38,11 @@ class Home extends Component {
   }
 
   startGame() {
-    const { uid } = this.state.user;
+    const { userID } = this.state;
     app.firestore()
-      .collection('game')
-      .add({ creator: uid })
-      .then(ref => [ref.collection('players').add({ uid }), ref])
+      .collection('games')
+      .add({ creator: userID })
+      .then(ref => [ref.collection('players').add({ userID }), ref])
       .then(([, gameRef]) => {
         this.setState({ gameID: gameRef.id });
       })
@@ -51,12 +52,12 @@ class Home extends Component {
   }
 
   joinGame() {
-    const { uid } = this.state.user;
+    const { userID } = this.state;
     app.firestore()
       .collection('game')
       .doc(this.state.gameToJoin)
       .collection('players')
-      .add({ uid })
+      .add({ userID })
       .then(() => {
         this.setState({ gameID: this.state.gameToJoin });
       })
@@ -72,9 +73,7 @@ class Home extends Component {
   render() {
     return (
       <HomeContainer>
-        <h1>
-          Welcome home {this.state.user.displayName}
-        </h1>
+        <UserProfile userID={this.state.userID} />
         {
           this.state.gameID ?
             <Lobby gameID={this.state.gameID} />

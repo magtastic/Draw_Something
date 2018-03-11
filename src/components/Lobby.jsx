@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import app from '../databases/firestore';
 
-const firestore = app.firestore();
-
 const LobbyContainer = styled.div``;
 
 class Lobby extends Component {
@@ -11,23 +9,31 @@ class Lobby extends Component {
     super(props);
     this.state = {
       gameID: props.gameID,
+      players: [],
     };
     this.listenForNewUsers();
   }
 
   listenForNewUsers() {
-    firestore
-      .collection('games')
-      .doc(this.state.gameID)
-      .collection('players')
-      .onSnapshot((docs) => {
-        console.log(docs);
-        docs.forEach((doc) => {
-          console.log(doc.data());
+    console.log(this.state.gameID);
+    app.firestore()
+      .collection(`games/${this.state.gameID}/players`)
+      .onSnapshot((snaps) => {
+        snaps.docChanges.forEach((snap) => {
+          console.log(snap);
+          switch (snap.type) {
+            case 'added': {
+              const newPlayer = snap.doc.data();
+              console.log('newplayer: ', newPlayer);
+              this.setState(prevState => ({ players: [...prevState.players, newPlayer.uid] }));
+              break;
+            }
+            default:
+              console.log(snap.doc.data());
+          }
         });
-        // const players = doc.data();
-        // console.log(players);
-        // this.setState({ players });
+      }, (err) => {
+        console.log(err);
       });
   }
 
@@ -39,6 +45,7 @@ class Lobby extends Component {
           gameID: {this.state.gameID}
         </h1>
         <h3>
+          Here are the players:
           {this.state.players}
         </h3>
       </LobbyContainer>
