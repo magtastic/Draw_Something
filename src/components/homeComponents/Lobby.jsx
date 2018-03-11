@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import app from '../databases/firestore';
+import app from '../../databases/firestore';
 
 const LobbyContainer = styled.div``;
 

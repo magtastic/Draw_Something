@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import Lobby from './Lobby';
 import UserProfile from './UserProfile';
-import app from '../databases/firestore';
+import app from '../../databases/firestore';
 
 const firestore = app.firestore();
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import * as firebase from 'firebase';
-import app from '../databases/firestore';
+import app from '../../databases/firestore';
 
 const LoginContainer = styled.div`
   display: flex;

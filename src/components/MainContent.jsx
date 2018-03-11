@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import Home from './Home';
-import LoginCard from './LoginCard';
+import Home from './homeComponents/Home';
+import LoginCard from './loginComponents/LoginCard';
 import app from '../databases/firestore';
 
 const MainContentContainer = styled.div``;
