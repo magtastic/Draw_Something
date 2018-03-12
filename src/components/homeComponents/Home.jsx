@@ -30,7 +30,7 @@ class Home extends Component {
       .doc(this.state.gameID)
       .onSnapshot((snap) => {
         const profile = snap.data();
-        if (profile.game_started) {
+        if (profile.game_ready) {
           this.setState({ gameHasStarted: true });
         } else {
           this.setState({ gameHasStarted: false });

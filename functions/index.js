@@ -8,7 +8,6 @@ admin.initializeApp(functions.config().firebase);
 const client = algoliasearch('BA488JXJYI', '2f4ad867a6c9cc985ab4e4f40086d9c4');
 const index = client.initIndex('Users');
 
-// TODO: Add a 'DONE' flag and make client listen to it.
 exports.giveUsersColor = functions.firestore
   .document('games/{gameID}')
   .onUpdate((event) => {
@@ -38,7 +37,14 @@ exports.giveUsersColor = functions.firestore
               .set({ color }));
           });
 
-          return Promise.all(promises);
+          // eslint-disable-next-line promise/no-nesting
+          return Promise.all(promises)
+            .then(() => admin.firestore()
+              .collection('games')
+              .doc(gameID)
+              .set({
+                game_ready: true,
+              }, { merge: true }));
         });
     }
     return 'no need to generate colors';
