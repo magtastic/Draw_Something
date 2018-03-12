@@ -44,35 +44,10 @@ class Home extends Component {
       });
   }
 
-  createGame() {
-    const { userID } = this.state;
-    firestore
-      .collection('games')
-      .add({ creator: userID, game_started: false })
-      .then(ref => [ref.collection('players').doc(userID).set({ in_room: true }), ref])
-      .then(([, gameRef]) => {
-        this.setState({ gameID: gameRef.id });
-        this.listenIfGameHasStarted();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  joinGame(gameID) {
-    const { userID } = this.state;
-    firestore
-      .collection('games')
-      .doc(gameID)
-      .collection('players')
-      .doc(userID)
-      .set({ in_room: true })
-      .then(() => {
-        this.setState({ gameID });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  gameCreated(gameID) {
+    console.log('THIS GAME HAS BEEN CREATED', gameID);
+    this.setState({ gameID });
+    this.listenIfGameHasStarted();
   }
 
   render() {
@@ -84,15 +59,15 @@ class Home extends Component {
             <div>
               {
                 this.state.gameHasStarted ?
-                  <Board gameID={this.state.gameID} />
+                  <Board gameID={this.state.gameID} userID={this.state.userID} />
                   :
                   <Lobby gameID={this.state.gameID} />
               }
             </div>
             :
             <GameCreation
-              createGame={this.createGame.bind(this)}
-              joinGame={this.joinGame.bind(this)}
+              userID={this.state.userID}
+              gameCreated={this.gameCreated.bind(this)}
             />
         }
       </HomeContainer>

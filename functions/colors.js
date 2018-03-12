@@ -1,13 +1,13 @@
 const myColors = [
-  '4AFF00',
-  'E8A40C',
-  'FF0000',
-  '2F0CE8',
-  '0DFFCF',
+  '#4AFF00',
+  '#E8A40C',
+  '#FF0000',
+  '#2F0CE8',
+  '#0DFFCF',
 ];
 
 module.exports = {
-  getColors: numColors => myColors.splice(0, numColors),
+  getColors: numColors => myColors.slice(0, numColors),
   getColorPosition: color => myColors.indexOf(color),
   nextColor: (color) => {
     if (color === '0DFFCF') {

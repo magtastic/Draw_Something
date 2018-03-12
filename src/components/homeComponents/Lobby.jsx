@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import app from '../../databases/firestore';
+import UserProfile from './UserProfile';
 
 const LobbyContainer = styled.div``;
 
@@ -56,7 +57,7 @@ class Lobby extends Component {
         </h1>
         <div>
           Here are the players:
-          { this.state.players.map(player => <h2 key={player}> {player} </h2>) }
+          { this.state.players.map(player => <UserProfile key={player} userID={player} />) }
         </div>
         <button onClick={this.startGame.bind(this)}> Start Game </button>
       </LobbyContainer>

@@ -26,6 +26,7 @@ function loginUser() {
           creation_time: user.metadata.creationTime,
           last_sign_in_time: user.metadata.lastSignInTime,
         },
+        credentails: result.credentails,
       });
     })
     .catch(err => console.log(err));

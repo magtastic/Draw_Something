@@ -30,18 +30,17 @@ class UserProfile extends Component {
   render() {
     return (
       <UserProfileContainer>
-        <h1>Welcome!</h1>
-        <h3>
+        <div>
           {
             this.state.profile ?
               <div>
-                <UserProfilePicture photoURL={this.state.profile.profile_picture_url} size="220px" />
+                <UserProfilePicture photoURL={this.state.profile.profile_picture_url} size="100px" />
                 {this.state.profile.user_name}
               </div>
             :
             null
           }
-        </h3>
+        </div>
       </UserProfileContainer>
     );
   }

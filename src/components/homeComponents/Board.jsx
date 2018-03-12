@@ -9,6 +9,11 @@ const BoardContainer = styled.div`
 `;
 
 const Canvas = styled.canvas`
+  background: ${(props) => {
+    console.log(props);
+    return props.myTurn ? 'white' : 'gray';
+  }
+};
   border: solid black 1px;
 `;
 
@@ -20,25 +25,15 @@ function getMousePos(e, canvas) {
   };
 }
 
-function drawLineBetween(prevPos, currPos, canvas) {
-  const ctx = canvas.getContext('2d');
-
-  ctx.beginPath();
-
-  ctx.strokeStyle = 'black';
-
-  ctx.moveTo(prevPos.x, prevPos.y);
-  ctx.lineTo(currPos.x, currPos.y);
-  ctx.lineWidth = 3;
-
-  ctx.stroke();
-}
-
 class Board extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      userID: props.userID,
       gameID: props.gameID,
+      color: undefined,
+      myTurn: false,
+      myIndex: undefined,
       strokes: [],
       playerColors: [],
       canvas: {
@@ -47,34 +42,92 @@ class Board extends Component {
       },
     };
 
-    this.sendPathToFirebase = props.sendPathToFirebase;
     this.captureMouseMove = this.captureMouseMove.bind(this);
+    this.listenToCurrentUserTurn();
     this.getUsers();
   }
 
   getUsers() {
     firestore
-      .collection(`games/${this.state.gameID}/players_colors`)
+      .collection('games')
+      .doc(this.state.gameID)
+      .collection('players_colors')
       .onSnapshot((snaps) => {
         snaps.docs.forEach((doc) => {
           const data = doc.data();
-          this.setState({
-            playerColors: this.state.playerColors.concat({ id: doc.id, color: data.color }),
-          });
+          if (doc.id === this.state.userID) {
+            this.setState({
+              playerColors: this.state.playerColors.concat({ id: doc.id, color: data.color }),
+              color: data.color,
+              myIndex: data.index,
+            });
+          } else {
+            this.setState({
+              playerColors: this.state.playerColors.concat({ id: doc.id, color: data.color }),
+            });
+          }
         });
       }, (err) => {
         console.log(`error in listening for new users ${err}`);
       });
   }
 
+  listenToCurrentUserTurn() {
+    firestore
+      .collection('games')
+      .doc(this.state.gameID)
+      .onSnapshot((doc) => {
+        if (this.state.userID === doc.data().current_players_turn) {
+          this.setState({ myTurn: true });
+        }
+      });
+  }
+
+  drawLineBetween(prevPos, currPos, canvas) {
+    const ctx = canvas.getContext('2d');
+
+    ctx.beginPath();
+
+    ctx.strokeStyle = this.state.color;
+
+    ctx.moveTo(prevPos.x, prevPos.y);
+    ctx.lineTo(currPos.x, currPos.y);
+    ctx.lineWidth = 3;
+
+    ctx.stroke();
+  }
+
   mouseDown(e) {
-    this.setState(prevState => ({ strokes: [...prevState.strokes, []] }));
-    e.target.addEventListener('mousemove', this.captureMouseMove, true);
+    if (this.state.myTurn) {
+      this.setState(prevState => ({ strokes: [...prevState.strokes, []] }));
+      e.target.addEventListener('mousemove', this.captureMouseMove, true);
+    }
   }
 
   mouseUp(e) {
+    this.nextPlayersTurn();
+    this.setState({
+      myTurn: false,
+    });
     e.target.removeEventListener('mousemove', this.captureMouseMove, true);
     this.sendPathToFirebase(this.state.strokes[this.state.strokes.length - 1]);
+  }
+
+  nextPlayersTurn() {
+    let nextUsersIndex = this.state.myIndex + 1;
+    if ((this.state.playerColors.length - 1) === this.state.myIndex) {
+      nextUsersIndex = 0;
+    }
+    this.state.playerColors.forEach((player) => {
+      if (player.index === nextUsersIndex) {
+        firestore
+          .collection('games')
+          .doc(this.state.gameID)
+          .set({
+            current_players_turn: player.id,
+          });
+      }
+    });
   }
 
   captureMouseMove(e) {
@@ -85,14 +138,14 @@ class Board extends Component {
 
     const currPath = strokes[strokes.length - 1];
     if (currPath.length > 1) {
-      drawLineBetween(currPath[currPath.length - 2], currPath[currPath.length - 1], canvas);
+      this.drawLineBetween(currPath[currPath.length - 2], currPath[currPath.length - 1], canvas);
     }
 
     this.setState({ strokes });
   }
 
   sendPathToFirebase(path) {
-    const pathRef = firestore.collection('game').doc(this.state.gameID).collection('paths');
+    const pathRef = firestore.collection('games').doc(this.state.gameID).collection('paths');
     pathRef.add({ path }).then(() => console.log('all cool'));
   }
 
@@ -100,6 +153,7 @@ class Board extends Component {
     return (
       <BoardContainer>
         <Canvas
+          myTurn={this.state.myTurn}
           onMouseDown={this.mouseDown.bind(this)}
           onMouseUp={this.mouseUp.bind(this)}
           width={this.state.canvas.width}
