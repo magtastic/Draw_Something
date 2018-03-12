@@ -30,7 +30,6 @@ class Home extends Component {
       .doc(this.state.gameID)
       .onSnapshot((snap) => {
         const profile = snap.data();
-        console.log(profile);
         if (profile.game_started) {
           this.setState({ gameHasStarted: true });
         } else {
@@ -46,12 +45,11 @@ class Home extends Component {
   }
 
   createGame() {
-    console.log('creating game');
     const { userID } = this.state;
     firestore
       .collection('games')
       .add({ creator: userID, game_started: false })
-      .then(ref => [ref.collection('players').add({ userID }), ref])
+      .then(ref => [ref.collection('players').doc(userID).set({ in_room: true }), ref])
       .then(([, gameRef]) => {
         this.setState({ gameID: gameRef.id });
         this.listenIfGameHasStarted();
@@ -67,7 +65,8 @@ class Home extends Component {
       .collection('games')
       .doc(gameID)
       .collection('players')
-      .add({ userID })
+      .doc(userID)
+      .set({ in_room: true })
       .then(() => {
         this.setState({ gameID });
       })

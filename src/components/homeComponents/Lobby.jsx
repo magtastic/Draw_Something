@@ -21,8 +21,7 @@ class Lobby extends Component {
         snaps.docChanges.forEach((snap) => {
           switch (snap.type) {
             case 'added': {
-              const newPlayer = snap.doc.data();
-              this.setState({ players: this.state.players.concat(newPlayer) });
+              this.setState({ players: this.state.players.concat(snap.doc.id) });
               break;
             }
             default:
@@ -57,7 +56,7 @@ class Lobby extends Component {
         </h1>
         <div>
           Here are the players:
-          { this.state.players.map(player => <h2 key={player.userID}> {player.userID} </h2>) }
+          { this.state.players.map(player => <h2 key={player}> {player} </h2>) }
         </div>
         <button onClick={this.startGame.bind(this)}> Start Game </button>
       </LobbyContainer>

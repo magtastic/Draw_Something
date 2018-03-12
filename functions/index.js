@@ -1,4 +1,4 @@
-const Colors = require('./colors');
+const colors = require('./colors');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const algoliasearch = require('algoliasearch');
@@ -24,15 +24,15 @@ exports.giveUsersColor = functions.firestore
         .then((snaps) => {
           const players = [];
           snaps.docs.forEach((doc) => {
-            const player = doc.data();
+            const player = doc.id;
             players.push(player);
           });
           return players;
         })
         .then((players) => {
-          const colors = Colors.getColors(players.length);
+          const myColors = colors.getColors(players.length);
           const playersColors = players.map((player, playerIndex) => {
-            const color = colors[playerIndex];
+            const color = myColors[playerIndex];
             return { player, color };
           });
           return playersColors;
@@ -44,7 +44,8 @@ exports.giveUsersColor = functions.firestore
               .collection('games')
               .doc(gameID)
               .collection('players_colors')
-              .add({ playerWithColor }));
+              .doc(playerWithColor.player)
+              .set({ color: playerWithColor.color }));
           });
           return Promise.all(promises);
         });

@@ -40,7 +40,7 @@ class Board extends Component {
     this.state = {
       gameID: props.gameID,
       strokes: [],
-      players: [],
+      playerColors: [],
       canvas: {
         width: 500,
         height: 500,
@@ -54,15 +54,15 @@ class Board extends Component {
 
   getUsers() {
     firestore
-      .collection(`games/${this.state.gameID}/players`)
-      .get()
-      .then((snaps) => {
-        snaps.docs.forEach((snap) => {
-          const newPlayer = snap.doc.data();
-          this.setState({ players: this.state.players.concat(newPlayer) });
+      .collection(`games/${this.state.gameID}/players_colors`)
+      .onSnapshot((snaps) => {
+        snaps.docs.forEach((doc) => {
+          const data = doc.data();
+          this.setState({
+            playerColors: this.state.playerColors.concat({ id: doc.id, color: data.color }),
+          });
         });
-      })
-      .catch((err) => {
+      }, (err) => {
         console.log(`error in listening for new users ${err}`);
       });
   }
@@ -105,7 +105,13 @@ class Board extends Component {
           width={this.state.canvas.width}
           height={this.state.canvas.height}
         />
-        { this.state.players.map(player => <h1 key={player.userID}>{player.userID}</h1>) }
+        {
+          this.state.playerColors
+            .map(playerColor => (
+              <h1 key={playerColor.id}>
+                {playerColor.id} <br /> {playerColor.color}
+              </h1>))
+        }
       </BoardContainer>
     );
   }
