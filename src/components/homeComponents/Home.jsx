@@ -45,11 +45,12 @@ class Home extends Component {
       });
   }
 
-  startGame() {
+  createGame() {
+    console.log('creating game');
     const { userID } = this.state;
     firestore
       .collection('games')
-      .add({ creator: userID })
+      .add({ creator: userID, game_started: false })
       .then(ref => [ref.collection('players').add({ userID }), ref])
       .then(([, gameRef]) => {
         this.setState({ gameID: gameRef.id });
@@ -91,7 +92,7 @@ class Home extends Component {
             </div>
             :
             <GameCreation
-              startGame={this.startGame.bind(this)}
+              createGame={this.createGame.bind(this)}
               joinGame={this.joinGame.bind(this)}
             />
         }

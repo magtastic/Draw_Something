@@ -20,7 +20,6 @@ function getMousePos(e, canvas) {
   };
 }
 
-
 function drawLineBetween(prevPos, currPos, canvas) {
   const ctx = canvas.getContext('2d');
 
@@ -41,6 +40,7 @@ class Board extends Component {
     this.state = {
       gameID: props.gameID,
       strokes: [],
+      players: [],
       canvas: {
         width: 500,
         height: 500,
@@ -49,22 +49,32 @@ class Board extends Component {
 
     this.sendPathToFirebase = props.sendPathToFirebase;
     this.captureMouseMove = this.captureMouseMove.bind(this);
-    this.getPlayers();
+    this.getUsers();
   }
 
-  getPlayers() {
+  getUsers() {
     firestore
-      .collection('games')
-      .doc(this.state.gameID)
-      .collection('players')
-      .get((snap) => {
-        this.setState({ players: snap.data() });
+      .collection(`games/${this.state.gameID}/players`)
+      .get()
+      .then((snaps) => {
+        snaps.docs.forEach((snap) => {
+          const newPlayer = snap.doc.data();
+          this.setState({ players: this.state.players.concat(newPlayer) });
+        });
+      })
+      .catch((err) => {
+        console.log(`error in listening for new users ${err}`);
       });
   }
 
-  sendPathToFirebase(path) {
-    const pathRef = firestore.collection('game').doc(this.state.gameID).collection('paths');
-    pathRef.add({ path }).then(() => console.log('all cool'));
+  mouseDown(e) {
+    this.setState(prevState => ({ strokes: [...prevState.strokes, []] }));
+    e.target.addEventListener('mousemove', this.captureMouseMove, true);
+  }
+
+  mouseUp(e) {
+    e.target.removeEventListener('mousemove', this.captureMouseMove, true);
+    this.sendPathToFirebase(this.state.strokes[this.state.strokes.length - 1]);
   }
 
   captureMouseMove(e) {
@@ -81,14 +91,9 @@ class Board extends Component {
     this.setState({ strokes });
   }
 
-  mouseDown(e) {
-    this.setState(prevState => ({ strokes: [...prevState.strokes, []] }));
-    e.target.addEventListener('mousemove', this.captureMouseMove, true);
-  }
-
-  mouseUp(e) {
-    e.target.removeEventListener('mousemove', this.captureMouseMove, true);
-    this.sendPathToFirebase(this.state.strokes[this.state.strokes.length - 1]);
+  sendPathToFirebase(path) {
+    const pathRef = firestore.collection('game').doc(this.state.gameID).collection('paths');
+    pathRef.add({ path }).then(() => console.log('all cool'));
   }
 
   render() {
@@ -100,7 +105,7 @@ class Board extends Component {
           width={this.state.canvas.width}
           height={this.state.canvas.height}
         />
-        { this.state.players.map(player => <h1>{player}</h1>) }
+        { this.state.players.map(player => <h1 key={player.userID}>{player.userID}</h1>) }
       </BoardContainer>
     );
   }

@@ -5,7 +5,7 @@ class CurrentUserHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      startGame: props.startGame,
+      createGame: props.createGame,
       joinGame: props.joinGame,
       gameToJoin: 'Insert Game ID',
     };
@@ -18,7 +18,7 @@ class CurrentUserHeader extends Component {
   render() {
     return (
       <div>
-        <button onClick={this.state.startGame}> Create a game </button>
+        <button onClick={this.state.createGame}> Create a game </button>
         <input type="text" value={this.state.gameToJoin} onChange={this.handleGameToJoinInput.bind(this)} />
         <button onClick={() => this.state.joinGame(this.state.gameToJoin)}>join game</button>
       </div>
