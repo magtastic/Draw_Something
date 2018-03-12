@@ -22,31 +22,22 @@ exports.giveUsersColor = functions.firestore
         .collection('players')
         .get()
         .then((snaps) => {
-          const players = [];
-          snaps.docs.forEach((doc) => {
-            const player = doc.id;
-            players.push(player);
-          });
-          return players;
-        })
-        .then((players) => {
-          const myColors = colors.getColors(players.length);
-          const playersColors = players.map((player, playerIndex) => {
-            const color = myColors[playerIndex];
-            return { player, color };
-          });
-          return playersColors;
-        })
-        .then((playersWithColros) => {
+          console.log(snaps.size);
+          const myColors = colors.getColors(snaps.size);
           const promises = [];
-          playersWithColros.forEach((playerWithColor) => {
+
+          snaps.docs.forEach((doc, i) => {
+            const player = doc.id;
+            const color = myColors[i];
+
             promises.push(admin.firestore()
               .collection('games')
               .doc(gameID)
               .collection('players_colors')
-              .doc(playerWithColor.player)
-              .set({ color: playerWithColor.color }));
+              .doc(player)
+              .set({ color }));
           });
+
           return Promise.all(promises);
         });
     }
