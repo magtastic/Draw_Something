@@ -7,7 +7,7 @@ const UserHeader = styled.div`
   width: 100%;
   height: 50px;
   display: flex;
-  background: blue;
+  border: solid black 1px;
 `;
 
 const UserHeaderContainer = styled.div`
