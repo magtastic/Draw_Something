@@ -14,10 +14,8 @@ class MainContent extends Component {
   }
 
   setupLoginListener() {
-    console.log('listening');
     app.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log(user.uid);
         this.setState({ userID: user.uid });
       } else {
         this.setState({ userID: undefined });

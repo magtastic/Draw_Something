@@ -40,13 +40,11 @@ class CurrentUserHeader extends Component {
 
   listenToUserInfo() {
     const { uid } = app.auth().currentUser;
-    console.log(uid);
     app.firestore()
       .collection('users')
       .doc(uid)
       .onSnapshot((snap) => {
         const profile = snap.data();
-        console.log(profile);
         this.setState({ profile });
       }, (err) => {
         console.log(err);
