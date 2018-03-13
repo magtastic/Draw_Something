@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import app from './../../databases/firestore';
+import json from './../../databases/words.json';
 import CreateGamePopUp from './CreateGamePopUp';
 // import styled from 'styled-components';
+
+const { words } = json;
 
 const firestore = app.firestore();
 
@@ -19,7 +22,11 @@ class CurrentUserHeader extends Component {
     const { userID } = this.state;
     firestore
       .collection('games')
-      .add({ creator: userID, game_started: false })
+      .add({
+        creator: userID,
+        game_started: false,
+        word: words[Math.floor(Math.random() * words.length)],
+      })
       .then(ref => [ref.collection('players').doc(userID).set({ in_room: true }), ref])
       .then(([, gameRef]) => {
         this.gameCreated(gameRef.id);

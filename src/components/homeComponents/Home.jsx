@@ -35,6 +35,7 @@ class Home extends Component {
         } else {
           this.setState({ gameHasStarted: false });
         }
+        this.setState({ gameWord: profile.word });
       })
       .then(() => {
         console.log('game data changed');
@@ -45,7 +46,6 @@ class Home extends Component {
   }
 
   gameCreated(gameID) {
-    console.log('THIS GAME HAS BEEN CREATED', gameID);
     this.setState({ gameID });
     this.listenIfGameHasStarted();
   }
@@ -55,13 +55,13 @@ class Home extends Component {
       <HomeContainer>
         <CurrentUserHeader />
         {
-          this.state.gameID ?
+          this.state.gameID && this.state.gameWord ?
             <div>
               {
                 this.state.gameHasStarted ?
                   <Board gameID={this.state.gameID} userID={this.state.userID} />
                   :
-                  <Lobby gameID={this.state.gameID} />
+                  <Lobby gameID={this.state.gameID} word={this.state.gameWord} />
               }
             </div>
             :
