@@ -16,7 +16,7 @@ function loginUser() {
     .signInWithPopup(provider)
     .then((result) => {
       const { user } = result;
-      return app.firestore().collection('users').doc(user.uid).set({
+      const userData = {
         user_name: user.displayName,
         email: user.email,
         profile_picture_url: user.photoURL,
@@ -26,8 +26,13 @@ function loginUser() {
           creation_time: user.metadata.creationTime,
           last_sign_in_time: user.metadata.lastSignInTime,
         },
-        credentails: result.credentails,
-      });
+        credentails: {
+          access_token: result.credential.accessToken,
+          id_token: result.credential.idToken,
+          provider_id: result.credential.providerId,
+        },
+      };
+      return app.firestore().collection('users').doc(user.uid).set(userData);
     })
     .catch(err => console.log(err));
 }

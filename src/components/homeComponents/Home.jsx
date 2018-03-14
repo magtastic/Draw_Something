@@ -59,9 +59,13 @@ class Home extends Component {
             <div>
               {
                 this.state.gameHasStarted ?
-                  <Board gameID={this.state.gameID} userID={this.state.userID} />
+                  <Board
+                    gameID={this.state.gameID}
+                    userID={this.state.userID}
+                    word={this.state.gameWord}
+                  />
                   :
-                  <Lobby gameID={this.state.gameID} word={this.state.gameWord} />
+                  <Lobby gameID={this.state.gameID} />
               }
             </div>
             :

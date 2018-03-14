@@ -32,6 +32,7 @@ class Board extends Component {
     this.state = {
       userID: props.userID,
       gameID: props.gameID,
+      word: props.word,
       color: undefined,
       myTurn: false,
       myIndex: undefined,
@@ -153,6 +154,7 @@ class Board extends Component {
   render() {
     return (
       <BoardContainer>
+        <h1>{this.state.word}</h1>
         <Canvas
           myTurn={this.state.myTurn}
           onMouseDown={this.mouseDown.bind(this)}

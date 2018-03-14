@@ -10,7 +10,6 @@ class Lobby extends Component {
     super(props);
     this.state = {
       gameID: props.gameID,
-      word: props.word,
       loading: false,
       players: [],
     };
@@ -55,8 +54,7 @@ class Lobby extends Component {
     return (
       <LobbyContainer>
         <h1>
-          Hey this is the lobby <br />
-          word: {this.state.word}
+          Welcome to the lobby.
         </h1>
         <div>
           Here are the players:
