@@ -11,6 +11,7 @@ class Lobby extends Component {
     this.state = {
       gameID: props.gameID,
       word: props.word,
+      loading: false,
       players: [],
     };
     this.listenForNewUsers();
@@ -42,6 +43,7 @@ class Lobby extends Component {
         game_started: true,
       }, { merge: true })
       .then(() => {
+        this.setState({ loading: true });
         console.log('game created successfully');
       })
       .catch((err) => {
@@ -61,6 +63,12 @@ class Lobby extends Component {
           { this.state.players.map(player => <UserProfile key={player} userID={player} />) }
         </div>
         <button onClick={this.startGame.bind(this)}> Start Game </button>
+        {
+          this.state.loading ?
+            <p>Loading...</p>
+            :
+            null
+        }
       </LobbyContainer>
     );
   }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import UserProfile from './UserProfile';
 import app from '../../databases/firestore';
 
 const firestore = app.firestore();
@@ -161,10 +162,7 @@ class Board extends Component {
         />
         {
           this.state.playerColors
-            .map(playerColor => (
-              <h1 key={playerColor.id}>
-                {playerColor.id} <br /> {playerColor.color}
-              </h1>))
+            .map(playerColor => <UserProfile userID={playerColor.id} />)
         }
       </BoardContainer>
     );
