@@ -21,14 +21,14 @@ exports.setUpGame = functions.firestore
         .collection('players')
         .get()
         .then((snaps) => {
-          const myColors = colors.getColors(snaps.size);
+          const myColors = colors.getAllColors();
           const promises = [];
-          // eslint-disable-next-line camelcase
-          const current_players_turn = snaps.docs[0].id;
+          const players = [];
 
           snaps.docs.forEach((doc, i) => {
             const player = doc.id;
             const color = myColors[i];
+            players.push(player);
 
             promises.push(admin.firestore()
               .collection('games')
@@ -37,6 +37,10 @@ exports.setUpGame = functions.firestore
               .doc(player)
               .set({ color, index: i }));
           });
+
+          // TODO: Add a function to array prototype that gets random element...
+          // eslint-disable-next-line camelcase
+          const current_players_turn = players[Math.floor(Math.random() * players.length)];
 
           // eslint-disable-next-line promise/no-nesting
           return Promise.all(promises)

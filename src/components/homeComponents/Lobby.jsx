@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import app from '../../databases/firestore';
 import UserProfile from './UserProfile';
 
+const firestore = app.firestore();
+
 const LobbyContainer = styled.div``;
 
 class Lobby extends Component {
@@ -10,6 +12,7 @@ class Lobby extends Component {
     super(props);
     this.state = {
       gameID: props.gameID,
+      userToAdd: 'userID here please..',
       loading: false,
       players: [],
     };
@@ -17,7 +20,7 @@ class Lobby extends Component {
   }
 
   listenForNewUsers() {
-    app.firestore()
+    firestore
       .collection(`games/${this.state.gameID}/players`)
       .onSnapshot((snaps) => {
         snaps.docChanges.forEach((snap) => {
@@ -35,7 +38,7 @@ class Lobby extends Component {
   }
 
   startGame() {
-    app.firestore()
+    firestore
       .collection('games')
       .doc(this.state.gameID)
       .set({
@@ -48,6 +51,25 @@ class Lobby extends Component {
       .catch((err) => {
         console.log(`error in creating game: ${err}`);
       });
+  }
+
+  addUserToGame() {
+    firestore
+      .collection('games')
+      .doc(this.state.gameID)
+      .collection('players')
+      .doc(this.state.userToAdd)
+      .set({ in_room: true })
+      .then(() => {
+        console.log('player added successfully');
+      })
+      .catch((err) => {
+        console.log('error adding player', err);
+      });
+  }
+
+  handleUserToAddInput(e) {
+    this.setState({ userToAdd: e.target.value });
   }
 
   render() {
@@ -67,6 +89,8 @@ class Lobby extends Component {
             :
             null
         }
+        <input type="text" value={this.state.userToAdd} onChange={this.handleUserToAddInput.bind(this)} />
+        <button onClick={this.addUserToGame.bind(this)}> add a player </button>
       </LobbyContainer>
     );
   }

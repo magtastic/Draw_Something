@@ -79,9 +79,11 @@ class Board extends Component {
       .collection('games')
       .doc(this.state.gameID)
       .onSnapshot((doc) => {
-        if (this.state.userID === doc.data().current_players_turn) {
+        const currentPlayersTurn = doc.data().current_players_turn;
+        if (this.state.userID === currentPlayersTurn) {
           this.setState({ myTurn: true });
         }
+        this.setState({ currentPlayersTurn });
       });
   }
 
@@ -164,7 +166,12 @@ class Board extends Component {
         />
         {
           this.state.playerColors
-            .map(playerColor => <UserProfile userID={playerColor.id} />)
+          .map(playerColor =>
+              (<UserProfile
+                userID={playerColor.id}
+                color={playerColor.color}
+                myTurn={this.state.currentPlayersTurn === playerColor.id}
+              />))
         }
       </BoardContainer>
     );
