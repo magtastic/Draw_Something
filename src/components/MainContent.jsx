@@ -4,7 +4,9 @@ import Home from './homeComponents/Home';
 import Login from './loginComponents/Login';
 import app from '../databases/firestore';
 
-const MainContentContainer = styled.div``;
+const MainContentContainer = styled.div`
+  height: 100%;
+`;
 
 class MainContent extends Component {
   constructor(props) {

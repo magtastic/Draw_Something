@@ -9,6 +9,7 @@ import app from '../../databases/firestore';
 const firestore = app.firestore();
 
 const HomeContainer = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

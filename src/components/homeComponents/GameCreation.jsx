@@ -5,6 +5,18 @@ import json from './../../databases/words.json';
 import CreateGamePopUp from './CreateGamePopUp';
 
 const GameCreationContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+const CreateGameContainer = styled.div`
+  border: solid black 1px;
+`;
+const JoinGameContainer = styled.div`
+  border: solid black 1px;
 `;
 
 const { words } = json;
@@ -62,10 +74,14 @@ class CurrentUserHeader extends Component {
   render() {
     return (
       <GameCreationContainer>
-        <button onClick={this.createGame.bind(this)}> Create a game </button>
-        <CreateGamePopUp />
-        <input type="text" value={this.gameToJoin} onChange={this.handleGameToJoinInput.bind(this)} />
-        <button onClick={this.joinGame}>join game</button>
+        <CreateGameContainer>
+          <button onClick={this.createGame.bind(this)}> Create a game </button>
+          <CreateGamePopUp />
+        </CreateGameContainer>
+        <JoinGameContainer>
+          <input type="text" value={this.gameToJoin} onChange={this.handleGameToJoinInput.bind(this)} />
+          <button onClick={this.joinGame}>join game</button>
+        </JoinGameContainer>
       </GameCreationContainer>
     );
   }
