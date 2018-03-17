@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import app from './../../databases/firestore';
 import json from './../../databases/words.json';
 import CreateGamePopUp from './CreateGamePopUp';
-// import styled from 'styled-components';
+
+const GameCreationContainer = styled.div`
+`;
 
 const { words } = json;
 
@@ -58,12 +61,12 @@ class CurrentUserHeader extends Component {
 
   render() {
     return (
-      <div>
+      <GameCreationContainer>
         <button onClick={this.createGame.bind(this)}> Create a game </button>
         <CreateGamePopUp />
         <input type="text" value={this.gameToJoin} onChange={this.handleGameToJoinInput.bind(this)} />
         <button onClick={this.joinGame}>join game</button>
-      </div>
+      </GameCreationContainer>
     );
   }
 }

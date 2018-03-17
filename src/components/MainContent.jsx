@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Home from './homeComponents/Home';
-import LoginCard from './loginComponents/LoginCard';
+import Login from './loginComponents/Login';
 import app from '../databases/firestore';
 
 const MainContentContainer = styled.div``;
@@ -26,7 +26,7 @@ class MainContent extends Component {
   render() {
     return (
       <MainContentContainer>
-        { this.state.userID ? <Home userID={this.state.userID} /> : <LoginCard /> }
+        { this.state.userID ? <Home userID={this.state.userID} /> : <Login /> }
       </MainContentContainer>
     );
   }
