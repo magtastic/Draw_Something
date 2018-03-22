@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import app from '../../databases/firestore';
 import UserProfile from './UserProfile';
+import UserSearch from './UserSearch';
 
 const firestore = app.firestore();
 
@@ -91,6 +92,7 @@ class Lobby extends Component {
         }
         <input type="text" value={this.state.userToAdd} onChange={this.handleUserToAddInput.bind(this)} />
         <button onClick={this.addUserToGame.bind(this)}> add a player </button>
+        <UserSearch />
       </LobbyContainer>
     );
   }

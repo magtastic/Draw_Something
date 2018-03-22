@@ -19,6 +19,7 @@ function loginUser() {
       const userData = {
         user_name: user.displayName,
         email: user.email,
+        user_id: user.uid,
         profile_picture_url: user.photoURL,
         provider: result.additionalUserInfo.providerId,
         provider_profile: result.additionalUserInfo.profile,
@@ -34,6 +35,7 @@ function loginUser() {
       };
       return app.firestore().collection('users').doc(user.uid).set(userData);
     })
+    .then(() => console.log('user data set successfully'))
     .catch(err => console.log(err));
 }
 

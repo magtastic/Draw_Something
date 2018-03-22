@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "algoliasearch": "^3.25.1",
+    "algoliasearch": "^3.26.0",
     "eslint": "^4.18.2",
     "firebase": "^4.10.1",
     "firebase-admin": "^5.10.0",

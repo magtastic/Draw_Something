@@ -18,7 +18,14 @@ class StartGamePopUp extends Component {
     this.state = {
       userID: props.userID,
       gameName: 'Untiteled',
+      userToSendInvitation: 'User name here',
     };
+    /*
+    create game in constuction
+    and add a Lobby initialized when done.
+    Remember to delete game if canceled.
+    this.creatGame()
+    */
   }
 
   createGame() {
@@ -42,7 +49,14 @@ class StartGamePopUp extends Component {
 
   handleGameNameInput(e) {
     this.setState({ gameName: e.target.value });
-    console.log(this.state);
+  }
+
+  handleUserToSendInvitationInput(e) {
+    this.setState({ gameName: e.target.value });
+  }
+
+  addUser() {
+    console.log(this.state.userToSendInvitation);
   }
 
   render() {
@@ -53,13 +67,15 @@ class StartGamePopUp extends Component {
         modal
         arrow={false}
       >
-        {close => (
+        { close => (
           <div>
-            Content here
+            <input type="text" value={this.state.userToSendInvitation} onChange={this.handleUserToSendInvitationInput.bind(this)} />
+            <button className="close" onClick={this.createGame.bind(this)}> Add User </button>
+
             <input type="text" value={this.state.gameName} onChange={this.handleGameNameInput.bind(this)} />
-            <button className="close" onClick={close}>
-            close
-            </button>
+            <button className="close" onClick={this.addUser.bind(this)}> Create Game </button>
+
+            <button className="close" onClick={close}> Cancel </button>
           </div>
       )}
       </Popup>

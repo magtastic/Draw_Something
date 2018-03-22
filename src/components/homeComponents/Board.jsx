@@ -168,6 +168,7 @@ class Board extends Component {
           this.state.playerColors
           .map(playerColor =>
               (<UserProfile
+                key={playerColor.id}
                 userID={playerColor.id}
                 color={playerColor.color}
                 myTurn={this.state.currentPlayersTurn === playerColor.id}

@@ -44,7 +44,7 @@ class UserProfile extends Component {
 
   render() {
     return (
-      <UserProfileContainer myTurn={this.state.myTurn}>
+      <UserProfileContainer myTurn={this.state.myTurn} >
         <div>
           {
             this.state.profile ?
@@ -53,7 +53,9 @@ class UserProfile extends Component {
                 {this.state.profile.user_name}
                 {
                   this.state.color ?
-                    <ColorDot color={this.state.color} />
+                    <ColorDot
+                      color={this.state.color}
+                    />
                     : null
                 }
               </div>
