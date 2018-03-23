@@ -26,6 +26,7 @@ class UserProfile extends Component {
       color: props.color,
       myTurn: props.myTurn,
       profile: undefined,
+      clickHandler: props.clickHandler,
     };
     this.listenToUserInfo();
   }
@@ -44,12 +45,18 @@ class UserProfile extends Component {
 
   render() {
     return (
-      <UserProfileContainer myTurn={this.state.myTurn} >
+      <UserProfileContainer
+        myTurn={this.state.myTurn}
+        onClick={() => this.state.clickHandler(this.state.userID)}
+      >
         <div>
           {
             this.state.profile ?
               <div>
-                <UserProfilePicture photoURL={this.state.profile.profile_picture_url} size="100px" />
+                <UserProfilePicture
+                  photoURL={this.state.profile.profile_picture_url}
+                  size="100px"
+                />
                 {this.state.profile.user_name}
                 {
                   this.state.color ?

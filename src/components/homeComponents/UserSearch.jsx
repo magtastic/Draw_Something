@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import algoliasearch from 'algoliasearch';
 import styled from 'styled-components';
 import UserProfile from './UserProfile';
-
-const client = algoliasearch('BA488JXJYI', '2719126aa82a3ef83207900d41725390');
-const index = client.initIndex('Users');
+import algolia from '../../databases/algolia';
 
 const UserSearchContainer = styled.div`
   display: flex;
@@ -19,21 +16,25 @@ class UserSearch extends Component {
     super(props);
     this.state = {
       users: [],
+      clickHandler: props.userClicked,
     };
   }
 
   searchAlgoliaUsers(e) {
-    index.search({
-      query: e.target.value,
-      hitsPerPage: 3,
+    if (e.target.value) {
+      algolia.search({
+        query: e.target.value,
+        hitsPerPage: 3,
       }, (err, content) => {
         if (err) throw err;
-        console.log(content.hits);
         if (content.hits) {
+          // TODO: filter out self.
           this.setState({ users: content.hits });
         }
-      }
-    );
+      });
+    } else {
+      this.setState({ users: [] });
+    }
   }
 
   render() {
@@ -41,8 +42,14 @@ class UserSearch extends Component {
       <UserSearchContainer>
         <input type="text" onChange={this.searchAlgoliaUsers.bind(this)} />
         {
-          // TODO: Add click handler to add to lobby, this means generic click handler in User Profile
-          this.state.users.map(user => <UserProfile key={user.objectID} userID={user.objectID} />)
+          // TODO: Add click handler to add
+          // to lobby, this means generic click handler in User Profile
+          this.state.users.map(user =>
+            (<UserProfile
+              key={user.objectID}
+              userID={user.objectID}
+              clickHandler={this.state.clickHandler}
+            />))
         }
       </UserSearchContainer>
     );

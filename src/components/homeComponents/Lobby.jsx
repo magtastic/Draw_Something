@@ -13,7 +13,6 @@ class Lobby extends Component {
     super(props);
     this.state = {
       gameID: props.gameID,
-      userToAdd: 'userID here please..',
       loading: false,
       players: [],
     };
@@ -54,12 +53,12 @@ class Lobby extends Component {
       });
   }
 
-  addUserToGame() {
+  addUserToGame(userID) {
     firestore
       .collection('games')
       .doc(this.state.gameID)
       .collection('players')
-      .doc(this.state.userToAdd)
+      .doc(userID)
       .set({ in_room: true })
       .then(() => {
         console.log('player added successfully');
@@ -67,10 +66,6 @@ class Lobby extends Component {
       .catch((err) => {
         console.log('error adding player', err);
       });
-  }
-
-  handleUserToAddInput(e) {
-    this.setState({ userToAdd: e.target.value });
   }
 
   render() {
@@ -90,9 +85,7 @@ class Lobby extends Component {
             :
             null
         }
-        <input type="text" value={this.state.userToAdd} onChange={this.handleUserToAddInput.bind(this)} />
-        <button onClick={this.addUserToGame.bind(this)}> add a player </button>
-        <UserSearch />
+        <UserSearch userClicked={this.addUserToGame.bind(this)} />
       </LobbyContainer>
     );
   }
